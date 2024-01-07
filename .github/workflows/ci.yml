@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JULIA_NUM_THREADS: 'auto'
+
+jobs:
+  CI:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Setup Julia
+      uses: julia-actions/setup-julia@v1
+      with:
+        show-versioninfo: 'true'
+    - name: Run Julia script
+      run: julia --color=yes main.jl
